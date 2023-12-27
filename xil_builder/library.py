@@ -48,7 +48,9 @@ class Library:
         tmp = SrcFile(p, t) 
         self.files.append(tmp)
 
-    def add_file(self, s : SrcFile):
-        assert s.get_type()==FType.VHDL or t==FType.VERILOG, "unexpected file type detected"
+    def add_file_obj(self, s : SrcFile):
+        t = s.get_type()
+        print(t)
+        assert t in [FType.VHDL, FType.VERILOG], f"unexpected file type detected{t}"
         assert s.get_path().is_file(), f"{s.get_path()} is not a file"
         self.files.append(s)

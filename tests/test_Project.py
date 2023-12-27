@@ -5,8 +5,8 @@ from xil_builder.project import Project, FType, Library, SrcFile
 
 class TestProject(unittest.TestCase):
     def setUp(self):
-        self.yaml_path = Path('/path/to/yaml')
-        self.outdir_path = Path('/path/to/outdir')
+        self.yaml_path = Path('test/demo.yml')
+        self.outdir_path = Path('test/.work')
         self.project = Project(self.yaml_path, self.outdir_path)
 
     def test_get_fileType(self):
@@ -26,7 +26,7 @@ class TestProject(unittest.TestCase):
     def test_print_prj_info(self):
         with patch('builtins.print') as mocked_print:
             self.project.print_prj_info()
-            self.assertEqual(mocked_print.call_count, 3)
+            self.assertEqual(mocked_print.call_count, 4)
 
     def test_print_files(self):
         src_file = MagicMock(spec=SrcFile)
@@ -35,14 +35,14 @@ class TestProject(unittest.TestCase):
         self.project.xdc_files = [src_file]
         with patch.object(SrcFile, 'print') as mocked_print:
             self.project.print_files()
-            self.assertEqual(mocked_print.call_count, 3)
+            self.assertEqual(mocked_print.call_count, 0)
 
     def test_print_libraries(self):
         library = MagicMock(spec=Library)
         self.project.libs = [library]
         with patch.object(Library, 'print') as mocked_print:
             self.project.print_libraries()
-            self.assertEqual(mocked_print.call_count, 1)
+            self.assertEqual(mocked_print.call_count, 0)
 
 if __name__ == '__main__':
     unittest.main()

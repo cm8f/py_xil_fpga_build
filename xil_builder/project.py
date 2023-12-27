@@ -6,7 +6,7 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-from library import *
+from xil_builder.library import *
 
 class Project:
     def __init__(self, yaml : Path, outdir : Path):
@@ -42,7 +42,7 @@ class Project:
             l = Library(str(k))
             files = self._get_files(data.get('libraries', {}).get(k))
             for f in files:
-                l.add_file(f)
+                l.add_file_obj(f)
             self.libs.append(l)
 
     def _get_fileType(self, f):
