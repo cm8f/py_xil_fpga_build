@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+from pathlib import Path
+from yaml import load, dump
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
+from library import *
+
+class Project:
+    def __init__(self, yaml : Path, outdir : Path):
+        assert yaml.is_file(), f"{yaml} is not a file"
+
+        self.yaml = yaml
+        self.root = self.yaml.parent
+        with self.yaml.open("r") as f:
+            data = load(f, Loader=Loader)
+        self.outdir = outdir
+        self.outdir.mkdir(parents=True, exist_ok=True)
+
+        # Project init
+        self.name = data.get('project', {}).get('name')
+        assert self.name is not None, "No project name specified"
+        self.part = data.get('project', {}).get('part')
+        assert self.part is not None, "No project part specified"
+        self.top = data.get('project', {}).get('top')
+        assert self.top is not None, "No project top specified"
+        self.generics = data.get('project', {}).get('generics')
+        if self.generics == None:
+            print("no project generics")
+        self.syn_args = data.get('project', {}).get('syn_args')
+        if self.syn_args == None:
+            print("no synthesis_args")
+        # files
+        self.bd_files = self._get_files(data.get('bd_files'))
+        self.ip_files = self._get_files(data.get('ip_files'))
+        self.xdc_files= self._get_files(data.get('constraints'))
+        # libraries
+        self.libs = []
+        for k in data.get('libraries').keys():
+            l = Library(str(k))
+            files = self._get_files(data.get('libraries', {}).get(k))
+            for f in files:
+                t = self._get_fileType(f)
+                l.add_file(f, t)
+            self.libs.append(l)
+
+    def _get_fileType(self, f):
+        match (f.suffix):
+            case ".v": 
+                t = FType.VERILOG
+            case ".vhd" | ".vhdl":
+                t = FType.VHDL
+            case ".xdc":
+                t = FType.XDC
+            case ".xci":
+                t = FType.XCI
+            case _:
+                t = FType.NONE
+
+    def _get_files(self, tmp, t=None):
+        files = []
+        if tmp is None:
+            return files
+        for i in tmp:
+            p = self.root / Path(i).parent
+            n = Path(i).name
+            flist = list(p.glob(n))
+            for f in flist:
+                if t is None:
+                    t = self._get_fileType(f)
+                src = SrcFile(f, FType(t))
+                files.append(f)
+        return files
+
+    def print_prj_info(self):
+        print(f"name:\t\t{self.name}")
+        print(f"part:\t\t{self.part}")
+        print(f"top:\t\t{self.name}")
+        if self.generics is not None:
+            print(f"generics:\t{self.generics}")
+    
+    def print_files(self):
+        print(f"ip: {self.ip_files}")
+        print(f"bd: {self.bd_files}")
+        print(f"xdc:{self.xdc_files}")
+
+    def print_libraries(self):
+        for l in self.libs:
+            l.print()
+
+
+if __name__ == "__main__":
+    print("UI as main")
+    path  = Path(__file__).parent.parent / "test"
+    cfg = list(path.glob("*.yml"))
+
+    for f in cfg:
+        prj = Project(f, path / "work")
+        prj.print_prj_info()
+        prj.print_libraries()

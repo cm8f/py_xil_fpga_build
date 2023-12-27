@@ -1,0 +1,45 @@
+project:
+  name: "demo"
+  part: "xc7z010clg400-1"
+  top: "demo_top"
+  generics:
+    - g_prod_test: False
+    - g_major : 0
+    - g_minor : 1
+    - g_patch : 1
+  syn_args:
+    flatten_hierarchy: "rebuild"  # none
+    gated_clock_conversion: "false"
+    bufg: 12
+    fanout_limit: 10000
+    directive: "Default"
+    fsm_extraction: "auto"
+    resource_sharing: "auto"
+    control_set_opt_threshold: "auto"
+    shreg_min_size:  5
+    max_bram: -1
+    max_dsp: -1
+    cascade_dsp: "auto"
+    verbose: False
+    keep_equivalent_registers: False
+    no_lc: False
+
+bd_files:
+  - "./bd1/*.tcl"
+  - "./bd0/*.tcl"
+
+ip_files: null
+
+constraints:
+  - "./xdc/*.xdc"
+
+libraries:
+  prj:
+    - "./hdl/*.vhd"
+    - "./hdl/*.v"
+    - "./hdl/*.sv"
+  pll:
+    - "./hdl/pll/*.vhd"
+  xadc:
+    - "./hdl/xadc/*.vhd"
+
