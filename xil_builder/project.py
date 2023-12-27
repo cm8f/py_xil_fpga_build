@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from pathlib import Path
-from yaml import load, dump
+from yaml import load
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CLoader as Loader
 except ImportError:
-    from yaml import Loader, Dumper
+    from yaml import Loader
 
-from xil_builder.library import *
+from xil_builder.library import SrcFile, Library, FType
 
 
 class Project:
@@ -28,10 +28,10 @@ class Project:
         self.top = data.get('project', {}).get('top')
         assert self.top is not None, "No project top specified"
         self.generics = data.get('project', {}).get('generics')
-        if self.generics == None:
+        if self.generics is None:
             print("no project generics")
         self.syn_args = data.get('project', {}).get('syn_args')
-        if self.syn_args == None:
+        if self.syn_args is None:
             print("no synthesis_args")
         # files
         self.bd_files = self._get_files(data.get('bd_files'))
@@ -40,11 +40,11 @@ class Project:
         # libraries
         self.libs = []
         for k in data.get('libraries').keys():
-            l = Library(str(k))
+            lib = Library(str(k))
             files = self._get_files(data.get('libraries', {}).get(k))
             for f in files:
-                l.add_file_obj(f)
-            self.libs.append(l)
+                lib.add_file_obj(f)
+            self.libs.append(lib)
 
     def _get_fileType(self, f):
         match (f.suffix):
@@ -95,8 +95,8 @@ class Project:
             f.print()
 
     def print_libraries(self):
-        for l in self.libs:
-            l.print()
+        for lib in self.libs:
+            lib.print()
 
 
 if __name__ == "__main__":

@@ -45,7 +45,8 @@ class Library:
     def add_file(self, path: Path, type):
         t = FType(type)
         p = Path(path)
-        assert t == FType.VHDL or t == FType.VERILOG, "unexpected file detected"
+        assert t == FType.VHDL or t == FType.VERILOG, \
+            "unexpected file detected"
         assert p.is_file(), f"{str(p)} is not a file"
         tmp = SrcFile(p, t)
         self.files.append(tmp)
