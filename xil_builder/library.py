@@ -2,7 +2,7 @@ from pathlib import Path
 from enum import Enum
 
 class FType(Enum):
-    NONE    = 0
+    NONE    = None
     XDC     = 1
     VHDL    = 2
     VERILOG = 3
@@ -19,6 +19,9 @@ class SrcFile:
 
     def get_path(self):
         return self.path
+    
+    def print(self):
+        print(f"{self.type}, {str(self.path)}")
 
 
 class Library:
@@ -37,10 +40,17 @@ class Library:
         for f in self.files:
             print(f"\t{str(f.get_path())}")
 
-    def add_file(self, path, type ):
+    def add_file(self, path : Path, type ):
         t = FType(type)
         p =  Path(path)
         assert t==FType.VHDL or t==FType.VERILOG, "unexpected file detected"
         assert p.is_file(), f"{str(p)} is not a file"
         tmp = SrcFile(p, t) 
         self.files.append(tmp)
+
+    def add_file(self, s : SrcFile):
+        assert s.get_type()==FType.VHDL or t==FType.VERILOG, "unexpected file type detected"
+        assert s.get_path().is_file(), f"{s.get_path()} is not a file"
+        self.files.append(s)
+
+        

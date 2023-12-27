@@ -42,15 +42,19 @@ class Project:
             l = Library(str(k))
             files = self._get_files(data.get('libraries', {}).get(k))
             for f in files:
-                t = self._get_fileType(f)
-                l.add_file(f, t)
+                #t = self._get_fileType(f)
+                #print(f"{t}, {f}, {f.suffix}")
+                #l.add_file(f, t)
+                l.add_file(f)
             self.libs.append(l)
 
     def _get_fileType(self, f):
         match (f.suffix):
             case ".v": 
                 t = FType.VERILOG
-            case ".vhd" | ".vhdl":
+            case ".vhdl":
+                t = FType.VHDL
+            case ".vhd":
                 t = FType.VHDL
             case ".xdc":
                 t = FType.XDC
@@ -58,6 +62,7 @@ class Project:
                 t = FType.XCI
             case _:
                 t = FType.NONE
+        return t
 
     def _get_files(self, tmp, t=None):
         files = []
@@ -70,8 +75,10 @@ class Project:
             for f in flist:
                 if t is None:
                     t = self._get_fileType(f)
-                src = SrcFile(f, FType(t))
-                files.append(f)
+                else:
+                    t = FType.NONE
+                src = SrcFile(f, t)
+                files.append(src)
         return files
 
     def print_prj_info(self):
@@ -82,9 +89,12 @@ class Project:
             print(f"generics:\t{self.generics}")
     
     def print_files(self):
-        print(f"ip: {self.ip_files}")
-        print(f"bd: {self.bd_files}")
-        print(f"xdc:{self.xdc_files}")
+        for f in self.ip_files:
+            f.print()
+        for f in self.bd_files:
+            f.print()
+        for f in self.xdc_files:
+            f.print()
 
     def print_libraries(self):
         for l in self.libs:
@@ -99,4 +109,5 @@ if __name__ == "__main__":
     for f in cfg:
         prj = Project(f, path / "work")
         prj.print_prj_info()
+        prj.print_files()
         prj.print_libraries()
