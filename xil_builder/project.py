@@ -42,9 +42,6 @@ class Project:
             l = Library(str(k))
             files = self._get_files(data.get('libraries', {}).get(k))
             for f in files:
-                #t = self._get_fileType(f)
-                #print(f"{t}, {f}, {f.suffix}")
-                #l.add_file(f, t)
                 l.add_file(f)
             self.libs.append(l)
 
@@ -102,12 +99,5 @@ class Project:
 
 
 if __name__ == "__main__":
-    print("UI as main")
-    path  = Path(__file__).parent.parent / "test"
-    cfg = list(path.glob("*.yml"))
+    pass
 
-    for f in cfg:
-        prj = Project(f, path / "work")
-        prj.print_prj_info()
-        prj.print_files()
-        prj.print_libraries()
