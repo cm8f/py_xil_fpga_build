@@ -52,5 +52,3 @@ class Library:
         assert s.get_type()==FType.VHDL or t==FType.VERILOG, "unexpected file type detected"
         assert s.get_path().is_file(), f"{s.get_path()} is not a file"
         self.files.append(s)
-
-        
