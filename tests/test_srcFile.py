@@ -2,6 +2,7 @@ import unittest
 from pathlib import Path
 from xil_builder.library import SrcFile, FType
 
+
 class TestSrcFile(unittest.TestCase):
     def setUp(self):
         self.src_file = SrcFile('./test/hdl/demo.vhd', FType.VHDL)
@@ -17,6 +18,7 @@ class TestSrcFile(unittest.TestCase):
         with unittest.mock.patch('builtins.print') as mocked_print:
             self.src_file.print()
             mocked_print.assert_called_once_with(expected_output)
+
 
 if __name__ == '__main__':
     unittest.main()

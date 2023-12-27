@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 from xil_builder.library import Library, SrcFile, FType
 
+
 class TestLibrary(unittest.TestCase):
     def setUp(self):
         self.library = Library('test_library')
@@ -26,12 +27,13 @@ class TestLibrary(unittest.TestCase):
 
     def test_add_file_with_src_file(self):
         src_file = MagicMock(spec=SrcFile)
-        src_file.get_type.return_value = FType.VHDL 
+        src_file.get_type.return_value = FType.VHDL
         src_file.get_path.return_value = Path('./test/hdl/demo.vhd')
         with patch.object(Path, 'is_file', return_value=True):
             self.library.add_file_obj(src_file)
             self.assertEqual(len(self.library.get_files()), 1)
             self.assertEqual(self.library.get_files()[0], src_file)
+
 
 if __name__ == '__main__':
     unittest.main()

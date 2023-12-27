@@ -8,8 +8,9 @@ except ImportError:
 
 from xil_builder.library import *
 
+
 class Project:
-    def __init__(self, yaml : Path, outdir : Path):
+    def __init__(self, yaml: Path, outdir: Path):
         assert yaml.is_file(), f"{yaml} is not a file"
 
         self.yaml = yaml
@@ -35,7 +36,7 @@ class Project:
         # files
         self.bd_files = self._get_files(data.get('bd_files'))
         self.ip_files = self._get_files(data.get('ip_files'))
-        self.xdc_files= self._get_files(data.get('constraints'))
+        self.xdc_files = self._get_files(data.get('constraints'))
         # libraries
         self.libs = []
         for k in data.get('libraries').keys():
@@ -47,7 +48,7 @@ class Project:
 
     def _get_fileType(self, f):
         match (f.suffix):
-            case ".v": 
+            case ".v":
                 t = FType.VERILOG
             case ".vhdl":
                 t = FType.VHDL
@@ -84,7 +85,7 @@ class Project:
         print(f"top:\t\t{self.name}")
         if self.generics is not None:
             print(f"generics:\t{self.generics}")
-    
+
     def print_files(self):
         for f in self.ip_files:
             f.print()
@@ -100,4 +101,3 @@ class Project:
 
 if __name__ == "__main__":
     pass
-

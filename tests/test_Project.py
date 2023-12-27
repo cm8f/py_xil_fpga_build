@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 from xil_builder.project import Project, FType, Library, SrcFile
 
+
 class TestProject(unittest.TestCase):
     def setUp(self):
         self.yaml_path = Path('test/demo.yml')
@@ -10,12 +11,18 @@ class TestProject(unittest.TestCase):
         self.project = Project(self.yaml_path, self.outdir_path)
 
     def test_get_fileType(self):
-        self.assertEqual(self.project._get_fileType(Path('file.v')), FType.VERILOG)
-        self.assertEqual(self.project._get_fileType(Path('file.vhdl')), FType.VHDL)
-        self.assertEqual(self.project._get_fileType(Path('file.vhd')), FType.VHDL)
-        self.assertEqual(self.project._get_fileType(Path('file.xdc')), FType.XDC)
-        self.assertEqual(self.project._get_fileType(Path('file.xci')), FType.XCI)
-        self.assertEqual(self.project._get_fileType(Path('file.unknown')), FType.NONE)
+        self.assertEqual(self.project._get_fileType(
+            Path('file.v')), FType.VERILOG)
+        self.assertEqual(self.project._get_fileType(
+            Path('file.vhdl')), FType.VHDL)
+        self.assertEqual(self.project._get_fileType(
+            Path('file.vhd')), FType.VHDL)
+        self.assertEqual(self.project._get_fileType(
+            Path('file.xdc')), FType.XDC)
+        self.assertEqual(self.project._get_fileType(
+            Path('file.xci')), FType.XCI)
+        self.assertEqual(self.project._get_fileType(
+            Path('file.unknown')), FType.NONE)
 
     def test_get_files(self):
         with patch.object(Path, 'glob', return_value=[Path('file.v')]):
@@ -43,6 +50,7 @@ class TestProject(unittest.TestCase):
         with patch.object(Library, 'print') as mocked_print:
             self.project.print_libraries()
             self.assertEqual(mocked_print.call_count, 0)
+
 
 if __name__ == '__main__':
     unittest.main()
