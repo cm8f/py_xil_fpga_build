@@ -6,8 +6,8 @@ from xil_builder.project import Project, FType, Library, SrcFile
 
 class TestProject(unittest.TestCase):
     def setUp(self):
-        self.yaml_path = Path('test/demo.yml')
-        self.outdir_path = Path('test/.work')
+        self.yaml_path = Path('tests/files/demo.yml')
+        self.outdir_path = Path('tests/files/.work')
         self.project = Project(self.yaml_path, self.outdir_path)
 
     def test_get_fileType(self):

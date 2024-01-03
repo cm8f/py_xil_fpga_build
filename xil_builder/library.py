@@ -9,6 +9,7 @@ class FType(Enum):
     VERILOG = 3
     XCI = 4
     BD = 5
+    SYSTEMVERILOG = 6
 
 
 class SrcFile:
@@ -53,7 +54,6 @@ class Library:
 
     def add_file_obj(self, s: SrcFile):
         t = s.get_type()
-        print(t)
         assert t in [FType.VHDL,
                      FType.VERILOG], f"unexpected file type detected{t}"
         assert s.get_path().is_file(), f"{s.get_path()} is not a file"
