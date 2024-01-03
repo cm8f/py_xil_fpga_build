@@ -7,8 +7,8 @@ from pathlib import Path
 
 class TestVivado(unittest.TestCase):
     def setUp(self):
-        self.yaml_path = Path('test/demo.yml')
-        self.outdir_path = Path('test/.work')
+        self.yaml_path = Path('tests/files/demo.yml')
+        self.outdir_path = Path('tests/files/.work')
         self.project = Project(self.yaml_path, self.outdir_path)
         self.vivado = Vivado(self.project, False, 'vhdl')
 
