@@ -54,6 +54,8 @@ class Project:
             print("libraries")
             self.print_libraries()
 
+        self.linux_cfg = data.get('linux')
+
     def _get_fileType(self, f):
         match (f.suffix):
             case ".v":
