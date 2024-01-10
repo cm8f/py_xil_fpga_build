@@ -59,8 +59,10 @@ class TestPetalinux(unittest.TestCase):
     @patch("xil_builder.vivado.run", return_value=MagicMock())
     def test_configure_step(self, mock_run):
         self.peta._configure(self.peta.xsa_dir)
+        fstem = f"latest-{self.peta.name}.xsa"
         mock_run.assert_called_with(
-            ["petalinux-config", f"--get-hw-description={self.peta.xsa_dir}"],
+            ["petalinux-config", "--silentconfig",
+             f"--get-hw-description={self.peta.xsa_dir / fstem}"],
             cwd=self.peta.linux_dir,
         )
 
@@ -114,8 +116,10 @@ class TestPetalinux(unittest.TestCase):
     @patch("xil_builder.vivado.run", return_value=MagicMock())
     def test_build_reconfig_no_package(self, mock_run):
         self.peta.build(reconfigure=True, package=False)
+        fstem = f"latest-{self.peta.name}.xsa"
         mock_run.assert_any_call(
-            ["petalinux-config", f"--get-hw-description={self.peta.xsa_dir}"],
+            ["petalinux-config", "--silentconfig",
+             f"--get-hw-description={self.peta.xsa_dir / fstem}"],
             cwd=self.peta.linux_dir,
         )
         mock_run.assert_any_call(["petalinux-build"], cwd=self.peta.linux_dir)
@@ -142,8 +146,10 @@ class TestPetalinux(unittest.TestCase):
     @patch("xil_builder.vivado.run", return_value=MagicMock())
     def test_build_reconfig_package(self, mock_run):
         self.peta.build(reconfigure=True, package=True)
+        fstem = f"latest-{self.peta.name}.xsa"
         mock_run.assert_any_call(
-            ["petalinux-config", f"--get-hw-description={self.peta.xsa_dir}"],
+            ["petalinux-config", "--silentconfig",
+             f"--get-hw-description={self.peta.xsa_dir / fstem}"],
             cwd=self.peta.linux_dir,
         )
         mock_run.assert_any_call(["petalinux-build"], cwd=self.peta.linux_dir)

@@ -1,28 +1,3 @@
-proc git_revision { } {
-  # The Maximum number of seconds
-  set cmd "git rev-parse --short=5 HEAD"
-  if {[catch {open "|$cmd"} input] } {
-    return -code error $input
-  } else {
-    gets $input line
-    set git_hash $line
-    close $input
-  }
-  return $git_hash
-}
-
-proc git_branch { } {
-  # The Maximum number of seconds
-  set cmd "git branch --show-current"
-  if {[catch {open "|$cmd"} input] } {
-    return -code error $input
-  } else {
-    gets $input line
-    set git_hash $line
-    close $input
-  }
-  return $git_hash
-}
 
 proc synth {PRJ_NAME PRJ_DIR SYNTH_ARGS TOP_MODULE PART} {
   eval "synth_design $SYNTH_ARGS -top $TOP_MODULE -part $PART"
@@ -53,6 +28,24 @@ proc phys_opt {PRJ_NAME PRJ_DIR {DIRECTIVE "AggresiveExplore"}} {
   report_utilization -file $PRJ_DIR/${PRJ_NAME}_post_place_physopt_util.rpt
   write_checkpoint -force $PRJ_DIR/${PRJ_NAME}_post_place_physopt.dcp
 }
+
+proc phys_opt_loop { PRJ_NAME PRJ_DIR WNS } {
+  set NLOOPS 5 
+  if {$WNS < 0.000} {
+    for {set i 0} {$i < $NLOOPS} {incr i} {
+      phys_opt_design -directive AggressiveExplore 
+      phys_opt_design -directive AggressiveFanoutOpt
+      phys_opt_design -directive AlternateReplication
+    }
+    report_timing_summary -file $PROJ_DIR/${PROJ_NM}_post_place_physopt_tim.rpt
+    report_design_analysis -logic_level_distribution \
+      -of_timing_paths [get_timing_paths -max_paths 10000 \
+      -slack_lesser_than 0] \ 
+      -file $PROJ_DIR/post_place_physopt_vios.rpt
+    write_checkpoint -force $PROJ_DIR/${PROJ_NM}_post_place_physopt.dcp
+  }
+}
+
 
 proc route {PRJ_NAME PRJ_DIR {$DIRECTIVE "Explore"}} {
   route_design -directive $DIRECTIVE
@@ -96,4 +89,15 @@ proc fit_once {NAME DIR ARGS TOP PART} {
 
   bitfile   $NAME $DIR $BUILD_DATE $BUILD_TIME $wns $BUILD_BRANCH $BUILD_REV
   write_hw_platform -fixed -include_bit -force -file  ${DIR}/${NAME}_${BUILD_BRANCH}_${BUILD_REV}_${BUILD_DATE}_${BUILD_TIME}.xsa 
+}
+
+proc fit_once_opt_loop { NAME DIR ARGS TOP PART } {
+  synth     $NAME $DIR $ARGS $TOP $PART
+  opt       $NAME $DIR 
+  place     $NAME $DIR 
+  set WNS [ get_property SLACK [get_timing_paths -max_paths 1 -nworst 1 -setup] ]
+  phys_opt_loop $PRJ_NAME $PRJ_DIR $WNS 
+  set wns [route     $PRJ_NAME $PRJ_DIR ]
+  bitfile   $PRJ_NAME $PRJ_DIR $BUILD_DATE $BUILD_TIME $wns $BUILD_BRANCH $BUILD_REV
+  set export2deploy 1
 }
