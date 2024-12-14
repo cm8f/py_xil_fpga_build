@@ -10,9 +10,9 @@ class TestVivado(unittest.TestCase):
         self.yaml_path = Path('tests/files/demo.yml')
         self.outdir_path = Path('tests/files/.work')
         self.project = Project(self.yaml_path, self.outdir_path)
-        self.vivado = Vivado(self.project, False, "vhdl")
+        self.vivado = Vivado(self.project, "vhdl")
 
-    @patch("xil_builder.vivado.Popen", return_value=MagicMock())
+    @patch("xil_builder.vivado.run", return_value=MagicMock())
     def test_build(self, mock_popen):
         mock_popen.return_value.communicate.return_value = ("", "error")
         self.vivado.build()
@@ -55,6 +55,10 @@ class TestPetalinux(unittest.TestCase):
         )
         self.peta = Petalinux(self.prj)
         Path(self.peta.linux_dir).mkdir(parents=True, exist_ok=True)
+
+    def tearDown(self):
+        self.peta.linux_dir.rmdir()
+        self.peta.linux_dir.parent.rmdir()
 
     @patch("xil_builder.vivado.run", return_value=MagicMock())
     def test_configure_step(self, mock_run):

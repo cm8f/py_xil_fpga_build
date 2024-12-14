@@ -3,10 +3,10 @@ project:
   part: "xc7z010clg400-1"
   top: "demo_top"
   generics:
-    - g_prod_test: False
-    - g_major : 0
-    - g_minor : 1
-    - g_patch : 1
+    g_prod_test: False
+    g_major : 0
+    g_minor : 1
+    g_patch : 1
   syn_args:
     flatten_hierarchy: "rebuild"  # none
     gated_clock_conversion: "false"
