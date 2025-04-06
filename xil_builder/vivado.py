@@ -30,6 +30,7 @@ class Vivado:
             self._prj_flow_hdl(f)
             self._prj_flow_ip(f)
             self._prj_flow_bd(f)
+            self._prj_flow_top(f)
             self._prj_flow_build(f)
             self._prj_flow_post(f)
 
@@ -153,6 +154,12 @@ class Vivado:
                 f.write('} "\n')
             else:
                 raise RuntimeError("Unknown type for synthesis argument")
+
+    def _prj_flow_top(self, f):
+        f.write(f"update_compile_order -fileset sources_1\n")
+        f.write(f"set_property top $TOP_MODULE [current_fileset]\n")
+        f.write(f"update_compile_order -fileset sources_1\n")
+
 
     def _prj_flow_head(self, f):
         """
